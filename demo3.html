@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .content{
+            background: #ffffff;
+            height:500px;
+            width:500px;
+            border:1px solid #000;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <h1>WS客户端应用</h1>
+    <button id="btn3">断开到服务器连接</button>
+</div>
+<input id="content" type="text"/>
+<input id="btn" value="发送" type="button">
+
+<div class="content">
+
+</div>
+
+
+<script src="./jquery-2.1.4.min.js"></script>
+<script>
+
+
+    $(function(){
+        function strToJson(str){//字符串转JSON函数
+            return JSON.parse(str);
+        };
+        //与服务器进行通信套接字
+        var socket = null;
+        //连接服务器---永久连接
+        socket = new WebSocket
+        ("ws://127.0.0.1:9001");
+        socket.onmessage = function(e){//页面加载完成后便开始接受数据
+            var obj=strToJson(e.data);//接收到的字符串数据转换成json
+            var html=$(".content").html();
+            if(obj.code!==-1){
+                html+=`
+                    <h3>${obj.msg}</h3>
+                `;
+                $(".content").html(html);
+            }
+        }
+
+        btn.onclick = function(){
+            var content=$("#content").val();
+            socket.send(content);
+        }
+        btn3.onclick = function(){
+            socket.close();
+        }
+
+    });
+</script>
+</body>
+</html>
